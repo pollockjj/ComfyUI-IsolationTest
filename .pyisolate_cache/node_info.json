@@ -1,0 +1,91 @@
+{
+  "RunIsolationTests": {
+    "input_types": {
+      "required": {
+        "test_module": {
+          "__pyisolate_tuple__": [
+            [
+              "all",
+              "routes"
+            ]
+          ]
+        }
+      }
+    },
+    "return_types": [
+      "STRING"
+    ],
+    "return_names": [
+      "report"
+    ],
+    "function": "run_tests",
+    "category": "PyIsolate/Debug",
+    "output_node": true,
+    "output_is_list": null,
+    "display_name": "Run Isolation Tests"
+  },
+  "TestCLIPProxy": {
+    "input_types": {
+      "required": {
+        "clip": {
+          "__pyisolate_tuple__": [
+            "CLIP"
+          ]
+        },
+        "text": {
+          "__pyisolate_tuple__": [
+            "STRING",
+            {
+              "multiline": true,
+              "default": "a photo of a cat"
+            }
+          ]
+        }
+      }
+    },
+    "return_types": [
+      "CONDITIONING",
+      "STRING"
+    ],
+    "return_names": [
+      "conditioning",
+      "report"
+    ],
+    "function": "test_clip",
+    "category": "PyIsolate/Debug",
+    "output_node": true,
+    "output_is_list": null,
+    "display_name": "Test CLIP Proxy (Full)"
+  },
+  "TestCLIPProxySimple": {
+    "input_types": {
+      "required": {
+        "clip": {
+          "__pyisolate_tuple__": [
+            "CLIP"
+          ]
+        },
+        "text": {
+          "__pyisolate_tuple__": [
+            "STRING",
+            {
+              "multiline": false,
+              "default": "hello world"
+            }
+          ]
+        }
+      }
+    },
+    "return_types": [
+      "STRING"
+    ],
+    "return_names": [
+      "report"
+    ],
+    "function": "test_tokenize",
+    "category": "PyIsolate/Debug",
+    "output_node": true,
+    "output_is_list": null,
+    "display_name": "Test CLIP Proxy (Tokenize Only)"
+  }
+}
