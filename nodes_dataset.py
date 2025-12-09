@@ -368,7 +368,7 @@ class TextProcessingNode_ISO(io.ComfyNode):
         raise NotImplementedError(f'{cls.__name__} must implement _group_process method')
 
 class ResizeImagesByShorterEdgeNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'ResizeImagesByShorterEdge'
+    node_id = 'ResizeImagesByShorterEdge_ISO'
     display_name = 'Resize Images by Shorter Edge'
     description = 'Resize images so that the shorter edge matches the specified length while preserving aspect ratio.'
     extra_inputs = [io.Int.Input('shorter_edge', default=512, min=1, max=8192, tooltip='Target length for the shorter edge.')]
@@ -387,7 +387,7 @@ class ResizeImagesByShorterEdgeNode_ISO(ImageProcessingNode_ISO):
         return pil_to_tensor(img)
 
 class ResizeImagesByLongerEdgeNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'ResizeImagesByLongerEdge'
+    node_id = 'ResizeImagesByLongerEdge_ISO'
     display_name = 'Resize Images by Longer Edge'
     description = 'Resize images so that the longer edge matches the specified length while preserving aspect ratio.'
     extra_inputs = [io.Int.Input('longer_edge', default=1024, min=1, max=8192, tooltip='Target length for the longer edge.')]
@@ -406,7 +406,7 @@ class ResizeImagesByLongerEdgeNode_ISO(ImageProcessingNode_ISO):
         return pil_to_tensor(img)
 
 class CenterCropImagesNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'CenterCropImages'
+    node_id = 'CenterCropImages_ISO'
     display_name = 'Center Crop Images'
     description = 'Center crop all images to the specified dimensions.'
     extra_inputs = [io.Int.Input('width', default=512, min=1, max=8192, tooltip='Crop width.'), io.Int.Input('height', default=512, min=1, max=8192, tooltip='Crop height.')]
@@ -422,7 +422,7 @@ class CenterCropImagesNode_ISO(ImageProcessingNode_ISO):
         return pil_to_tensor(img)
 
 class RandomCropImagesNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'RandomCropImages'
+    node_id = 'RandomCropImages_ISO'
     display_name = 'Random Crop Images'
     description = 'Randomly crop all images to the specified dimensions (for data augmentation).'
     extra_inputs = [io.Int.Input('width', default=512, min=1, max=8192, tooltip='Crop width.'), io.Int.Input('height', default=512, min=1, max=8192, tooltip='Crop height.'), io.Int.Input('seed', default=0, min=0, max=18446744073709551615, tooltip='Random seed.')]
@@ -441,7 +441,7 @@ class RandomCropImagesNode_ISO(ImageProcessingNode_ISO):
         return pil_to_tensor(img)
 
 class NormalizeImagesNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'NormalizeImages'
+    node_id = 'NormalizeImages_ISO'
     display_name = 'Normalize Images'
     description = 'Normalize images using mean and standard deviation.'
     extra_inputs = [io.Float.Input('mean', default=0.5, min=0.0, max=1.0, tooltip='Mean value for normalization.'), io.Float.Input('std', default=0.5, min=0.001, max=1.0, tooltip='Standard deviation for normalization.')]
@@ -451,7 +451,7 @@ class NormalizeImagesNode_ISO(ImageProcessingNode_ISO):
         return (image - mean) / std
 
 class AdjustBrightnessNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'AdjustBrightness'
+    node_id = 'AdjustBrightness_ISO'
     display_name = 'Adjust Brightness'
     description = 'Adjust brightness of all images.'
     extra_inputs = [io.Float.Input('factor', default=1.0, min=0.0, max=2.0, tooltip='Brightness factor. 1.0 = no change, <1.0 = darker, >1.0 = brighter.')]
@@ -461,7 +461,7 @@ class AdjustBrightnessNode_ISO(ImageProcessingNode_ISO):
         return (image * factor).clamp(0.0, 1.0)
 
 class AdjustContrastNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'AdjustContrast'
+    node_id = 'AdjustContrast_ISO'
     display_name = 'Adjust Contrast'
     description = 'Adjust contrast of all images.'
     extra_inputs = [io.Float.Input('factor', default=1.0, min=0.0, max=2.0, tooltip='Contrast factor. 1.0 = no change, <1.0 = less contrast, >1.0 = more contrast.')]
@@ -471,7 +471,7 @@ class AdjustContrastNode_ISO(ImageProcessingNode_ISO):
         return ((image - 0.5) * factor + 0.5).clamp(0.0, 1.0)
 
 class ShuffleDatasetNode_ISO(ImageProcessingNode_ISO):
-    node_id = 'ShuffleDataset'
+    node_id = 'ShuffleDataset_ISO'
     display_name = 'Shuffle Image Dataset'
     description = 'Randomly shuffle the order of images in the dataset.'
     is_group_process = True
@@ -500,7 +500,7 @@ class ShuffleImageTextDatasetNode_ISO(io.ComfyNode):
         return io.NodeOutput(shuffled_images, shuffled_texts)
 
 class TextToLowercaseNode_ISO(TextProcessingNode_ISO):
-    node_id = 'TextToLowercase'
+    node_id = 'TextToLowercase_ISO'
     display_name = 'Text to Lowercase'
     description = 'Convert all texts to lowercase.'
 
@@ -509,7 +509,7 @@ class TextToLowercaseNode_ISO(TextProcessingNode_ISO):
         return text.lower()
 
 class TextToUppercaseNode_ISO(TextProcessingNode_ISO):
-    node_id = 'TextToUppercase'
+    node_id = 'TextToUppercase_ISO'
     display_name = 'Text to Uppercase'
     description = 'Convert all texts to uppercase.'
 
@@ -518,7 +518,7 @@ class TextToUppercaseNode_ISO(TextProcessingNode_ISO):
         return text.upper()
 
 class TruncateTextNode_ISO(TextProcessingNode_ISO):
-    node_id = 'TruncateText'
+    node_id = 'TruncateText_ISO'
     display_name = 'Truncate Text'
     description = 'Truncate all texts to a maximum length.'
     extra_inputs = [io.Int.Input('max_length', default=77, min=1, max=10000, tooltip='Maximum text length.')]
@@ -528,7 +528,7 @@ class TruncateTextNode_ISO(TextProcessingNode_ISO):
         return text[:max_length]
 
 class AddTextPrefixNode_ISO(TextProcessingNode_ISO):
-    node_id = 'AddTextPrefix'
+    node_id = 'AddTextPrefix_ISO'
     display_name = 'Add Text Prefix'
     description = 'Add a prefix to all texts.'
     extra_inputs = [io.String.Input('prefix', default='', tooltip='Prefix to add.')]
@@ -538,7 +538,7 @@ class AddTextPrefixNode_ISO(TextProcessingNode_ISO):
         return prefix + text
 
 class AddTextSuffixNode_ISO(TextProcessingNode_ISO):
-    node_id = 'AddTextSuffix'
+    node_id = 'AddTextSuffix_ISO'
     display_name = 'Add Text Suffix'
     description = 'Add a suffix to all texts.'
     extra_inputs = [io.String.Input('suffix', default='', tooltip='Suffix to add.')]
@@ -548,7 +548,7 @@ class AddTextSuffixNode_ISO(TextProcessingNode_ISO):
         return text + suffix
 
 class ReplaceTextNode_ISO(TextProcessingNode_ISO):
-    node_id = 'ReplaceText'
+    node_id = 'ReplaceText_ISO'
     display_name = 'Replace Text'
     description = 'Replace text in all texts.'
     extra_inputs = [io.String.Input('find', default='', tooltip='Text to find.'), io.String.Input('replace', default='', tooltip='Text to replace with.')]
@@ -558,7 +558,7 @@ class ReplaceTextNode_ISO(TextProcessingNode_ISO):
         return text.replace(find, replace)
 
 class StripWhitespaceNode_ISO(TextProcessingNode_ISO):
-    node_id = 'StripWhitespace'
+    node_id = 'StripWhitespace_ISO'
     display_name = 'Strip Whitespace'
     description = 'Strip leading and trailing whitespace from all texts.'
 
@@ -568,7 +568,7 @@ class StripWhitespaceNode_ISO(TextProcessingNode_ISO):
 
 class ImageDeduplicationNode_ISO(ImageProcessingNode_ISO):
     """Remove duplicate or very similar images from the dataset using perceptual hashing."""
-    node_id = 'ImageDeduplication'
+    node_id = 'ImageDeduplication_ISO'
     display_name = 'Image Deduplication'
     description = 'Remove duplicate or very similar images from the dataset.'
     is_group_process = True
@@ -611,7 +611,7 @@ class ImageDeduplicationNode_ISO(ImageProcessingNode_ISO):
 
 class ImageGridNode_ISO(ImageProcessingNode_ISO):
     """Combine multiple images into a single grid/collage."""
-    node_id = 'ImageGrid'
+    node_id = 'ImageGrid_ISO'
     display_name = 'Image Grid'
     description = 'Arrange multiple images into a grid layout.'
     is_group_process = True
@@ -641,7 +641,7 @@ class ImageGridNode_ISO(ImageProcessingNode_ISO):
 
 class MergeImageListsNode_ISO(ImageProcessingNode_ISO):
     """Merge multiple image lists into a single list."""
-    node_id = 'MergeImageLists'
+    node_id = 'MergeImageLists_ISO'
     display_name = 'Merge Image Lists'
     description = 'Concatenate multiple image lists into one.'
     is_group_process = True
@@ -654,7 +654,7 @@ class MergeImageListsNode_ISO(ImageProcessingNode_ISO):
 
 class MergeTextListsNode_ISO(TextProcessingNode_ISO):
     """Merge multiple text lists into a single list."""
-    node_id = 'MergeTextLists'
+    node_id = 'MergeTextLists_ISO'
     display_name = 'Merge Text Lists'
     description = 'Concatenate multiple text lists into one.'
     is_group_process = True
