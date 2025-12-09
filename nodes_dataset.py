@@ -367,7 +367,7 @@ class TextProcessingNode_ISO(io.ComfyNode):
         """
         raise NotImplementedError(f'{cls.__name__} must implement _group_process method')
 
-class ResizeImagesByShorterEdgeNode(ImageProcessingNode_ISO):
+class ResizeImagesByShorterEdgeNode_ISO(ImageProcessingNode_ISO):
     node_id = 'ResizeImagesByShorterEdge'
     display_name = 'Resize Images by Shorter Edge'
     description = 'Resize images so that the shorter edge matches the specified length while preserving aspect ratio.'
@@ -386,7 +386,7 @@ class ResizeImagesByShorterEdgeNode(ImageProcessingNode_ISO):
         img = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
         return pil_to_tensor(img)
 
-class ResizeImagesByLongerEdgeNode(ImageProcessingNode_ISO):
+class ResizeImagesByLongerEdgeNode_ISO(ImageProcessingNode_ISO):
     node_id = 'ResizeImagesByLongerEdge'
     display_name = 'Resize Images by Longer Edge'
     description = 'Resize images so that the longer edge matches the specified length while preserving aspect ratio.'
@@ -405,7 +405,7 @@ class ResizeImagesByLongerEdgeNode(ImageProcessingNode_ISO):
         img = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
         return pil_to_tensor(img)
 
-class CenterCropImagesNode(ImageProcessingNode_ISO):
+class CenterCropImagesNode_ISO(ImageProcessingNode_ISO):
     node_id = 'CenterCropImages'
     display_name = 'Center Crop Images'
     description = 'Center crop all images to the specified dimensions.'
@@ -421,7 +421,7 @@ class CenterCropImagesNode(ImageProcessingNode_ISO):
         img = img.crop((left, top, right, bottom))
         return pil_to_tensor(img)
 
-class RandomCropImagesNode(ImageProcessingNode_ISO):
+class RandomCropImagesNode_ISO(ImageProcessingNode_ISO):
     node_id = 'RandomCropImages'
     display_name = 'Random Crop Images'
     description = 'Randomly crop all images to the specified dimensions (for data augmentation).'
@@ -440,7 +440,7 @@ class RandomCropImagesNode(ImageProcessingNode_ISO):
         img = img.crop((left, top, right, bottom))
         return pil_to_tensor(img)
 
-class NormalizeImagesNode(ImageProcessingNode_ISO):
+class NormalizeImagesNode_ISO(ImageProcessingNode_ISO):
     node_id = 'NormalizeImages'
     display_name = 'Normalize Images'
     description = 'Normalize images using mean and standard deviation.'
@@ -450,7 +450,7 @@ class NormalizeImagesNode(ImageProcessingNode_ISO):
     def _process(cls, image, mean, std):
         return (image - mean) / std
 
-class AdjustBrightnessNode(ImageProcessingNode_ISO):
+class AdjustBrightnessNode_ISO(ImageProcessingNode_ISO):
     node_id = 'AdjustBrightness'
     display_name = 'Adjust Brightness'
     description = 'Adjust brightness of all images.'
@@ -460,7 +460,7 @@ class AdjustBrightnessNode(ImageProcessingNode_ISO):
     def _process(cls, image, factor):
         return (image * factor).clamp(0.0, 1.0)
 
-class AdjustContrastNode(ImageProcessingNode_ISO):
+class AdjustContrastNode_ISO(ImageProcessingNode_ISO):
     node_id = 'AdjustContrast'
     display_name = 'Adjust Contrast'
     description = 'Adjust contrast of all images.'
@@ -470,7 +470,7 @@ class AdjustContrastNode(ImageProcessingNode_ISO):
     def _process(cls, image, factor):
         return ((image - 0.5) * factor + 0.5).clamp(0.0, 1.0)
 
-class ShuffleDatasetNode(ImageProcessingNode_ISO):
+class ShuffleDatasetNode_ISO(ImageProcessingNode_ISO):
     node_id = 'ShuffleDataset'
     display_name = 'Shuffle Image Dataset'
     description = 'Randomly shuffle the order of images in the dataset.'
@@ -499,7 +499,7 @@ class ShuffleImageTextDatasetNode_ISO(io.ComfyNode):
         shuffled_texts = [texts[i] for i in indices]
         return io.NodeOutput(shuffled_images, shuffled_texts)
 
-class TextToLowercaseNode(TextProcessingNode_ISO):
+class TextToLowercaseNode_ISO(TextProcessingNode_ISO):
     node_id = 'TextToLowercase'
     display_name = 'Text to Lowercase'
     description = 'Convert all texts to lowercase.'
@@ -508,7 +508,7 @@ class TextToLowercaseNode(TextProcessingNode_ISO):
     def _process(cls, text):
         return text.lower()
 
-class TextToUppercaseNode(TextProcessingNode_ISO):
+class TextToUppercaseNode_ISO(TextProcessingNode_ISO):
     node_id = 'TextToUppercase'
     display_name = 'Text to Uppercase'
     description = 'Convert all texts to uppercase.'
@@ -517,7 +517,7 @@ class TextToUppercaseNode(TextProcessingNode_ISO):
     def _process(cls, text):
         return text.upper()
 
-class TruncateTextNode(TextProcessingNode_ISO):
+class TruncateTextNode_ISO(TextProcessingNode_ISO):
     node_id = 'TruncateText'
     display_name = 'Truncate Text'
     description = 'Truncate all texts to a maximum length.'
@@ -527,7 +527,7 @@ class TruncateTextNode(TextProcessingNode_ISO):
     def _process(cls, text, max_length):
         return text[:max_length]
 
-class AddTextPrefixNode(TextProcessingNode_ISO):
+class AddTextPrefixNode_ISO(TextProcessingNode_ISO):
     node_id = 'AddTextPrefix'
     display_name = 'Add Text Prefix'
     description = 'Add a prefix to all texts.'
@@ -537,7 +537,7 @@ class AddTextPrefixNode(TextProcessingNode_ISO):
     def _process(cls, text, prefix):
         return prefix + text
 
-class AddTextSuffixNode(TextProcessingNode_ISO):
+class AddTextSuffixNode_ISO(TextProcessingNode_ISO):
     node_id = 'AddTextSuffix'
     display_name = 'Add Text Suffix'
     description = 'Add a suffix to all texts.'
@@ -547,7 +547,7 @@ class AddTextSuffixNode(TextProcessingNode_ISO):
     def _process(cls, text, suffix):
         return text + suffix
 
-class ReplaceTextNode(TextProcessingNode_ISO):
+class ReplaceTextNode_ISO(TextProcessingNode_ISO):
     node_id = 'ReplaceText'
     display_name = 'Replace Text'
     description = 'Replace text in all texts.'
@@ -557,7 +557,7 @@ class ReplaceTextNode(TextProcessingNode_ISO):
     def _process(cls, text, find, replace):
         return text.replace(find, replace)
 
-class StripWhitespaceNode(TextProcessingNode_ISO):
+class StripWhitespaceNode_ISO(TextProcessingNode_ISO):
     node_id = 'StripWhitespace'
     display_name = 'Strip Whitespace'
     description = 'Strip leading and trailing whitespace from all texts.'
@@ -566,7 +566,7 @@ class StripWhitespaceNode(TextProcessingNode_ISO):
     def _process(cls, text):
         return text.strip()
 
-class ImageDeduplicationNode(ImageProcessingNode_ISO):
+class ImageDeduplicationNode_ISO(ImageProcessingNode_ISO):
     """Remove duplicate or very similar images from the dataset using perceptual hashing."""
     node_id = 'ImageDeduplication'
     display_name = 'Image Deduplication'
@@ -609,7 +609,7 @@ class ImageDeduplicationNode(ImageProcessingNode_ISO):
         logging.info(f'Deduplication: kept {len(unique_images)} out of {len(images)} images')
         return unique_images
 
-class ImageGridNode(ImageProcessingNode_ISO):
+class ImageGridNode_ISO(ImageProcessingNode_ISO):
     """Combine multiple images into a single grid/collage."""
     node_id = 'ImageGrid'
     display_name = 'Image Grid'
@@ -639,7 +639,7 @@ class ImageGridNode(ImageProcessingNode_ISO):
         logging.info(f'Created {columns}x{rows} grid with {num_images} images ({grid_width}x{grid_height})')
         return pil_to_tensor(grid)
 
-class MergeImageListsNode(ImageProcessingNode_ISO):
+class MergeImageListsNode_ISO(ImageProcessingNode_ISO):
     """Merge multiple image lists into a single list."""
     node_id = 'MergeImageLists'
     display_name = 'Merge Image Lists'
@@ -652,7 +652,7 @@ class MergeImageListsNode(ImageProcessingNode_ISO):
         logging.info(f'Merged image list contains {len(images)} images')
         return images
 
-class MergeTextListsNode(TextProcessingNode_ISO):
+class MergeTextListsNode_ISO(TextProcessingNode_ISO):
     """Merge multiple text lists into a single list."""
     node_id = 'MergeTextLists'
     display_name = 'Merge Text Lists'
@@ -766,7 +766,35 @@ class DatasetExtension_ISO(ComfyExtension):
 
     @override
     async def get_node_list(self) -> list[type[io.ComfyNode]]:
-        return [LoadImageDataSetFromFolderNode_ISO, LoadImageTextDataSetFromFolderNode_ISO, SaveImageDataSetToFolderNode_ISO, SaveImageTextDataSetToFolderNode_ISO, ResizeImagesByShorterEdgeNode, ResizeImagesByLongerEdgeNode, CenterCropImagesNode, RandomCropImagesNode, NormalizeImagesNode, AdjustBrightnessNode, AdjustContrastNode, ShuffleDatasetNode, ShuffleImageTextDatasetNode_ISO, TextToLowercaseNode, TextToUppercaseNode, TruncateTextNode, AddTextPrefixNode, AddTextSuffixNode, ReplaceTextNode, StripWhitespaceNode, ImageDeduplicationNode, ImageGridNode, MergeImageListsNode, MergeTextListsNode, MakeTrainingDataset_ISO, SaveTrainingDataset_ISO, LoadTrainingDataset_ISO]
+        return [
+            LoadImageDataSetFromFolderNode_ISO,
+            LoadImageTextDataSetFromFolderNode_ISO,
+            SaveImageDataSetToFolderNode_ISO,
+            SaveImageTextDataSetToFolderNode_ISO,
+            ResizeImagesByShorterEdgeNode_ISO,
+            ResizeImagesByLongerEdgeNode_ISO,
+            CenterCropImagesNode_ISO,
+            RandomCropImagesNode_ISO,
+            NormalizeImagesNode_ISO,
+            AdjustBrightnessNode_ISO,
+            AdjustContrastNode_ISO,
+            ShuffleDatasetNode_ISO,
+            ShuffleImageTextDatasetNode_ISO,
+            TextToLowercaseNode_ISO,
+            TextToUppercaseNode_ISO,
+            TruncateTextNode_ISO,
+            AddTextPrefixNode_ISO,
+            AddTextSuffixNode_ISO,
+            ReplaceTextNode_ISO,
+            StripWhitespaceNode_ISO,
+            ImageDeduplicationNode_ISO,
+            ImageGridNode_ISO,
+            MergeImageListsNode_ISO,
+            MergeTextListsNode_ISO,
+            MakeTrainingDataset_ISO,
+            SaveTrainingDataset_ISO,
+            LoadTrainingDataset_ISO,
+        ]
 
 async def comfy_entrypoint() -> DatasetExtension_ISO:
     return DatasetExtension_ISO()
