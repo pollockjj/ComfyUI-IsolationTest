@@ -41,6 +41,7 @@ from .nodes_lt import LtxvExtension_ISO
 from .nodes_lumina2 import Lumina2Extension_ISO
 from .nodes_mahiro import MahiroExtension_ISO
 from .nodes_mochi import MochiExtension_ISO
+from .nodes_model_passthrough import ModelPassthroughExtension_ISO
 from .nodes_model_downscale import ModelDownscaleExtension_ISO
 from .nodes_morphology import MorphologyExtension_ISO
 from .nodes_nop import NopExtension_ISO
@@ -122,6 +123,7 @@ async def comfy_entrypoint():
         Lumina2Extension_ISO(),
         MahiroExtension_ISO(),
         MochiExtension_ISO(),
+        ModelPassthroughExtension_ISO(),
         ModelDownscaleExtension_ISO(),
         MorphologyExtension_ISO(),
         NopExtension_ISO(),
