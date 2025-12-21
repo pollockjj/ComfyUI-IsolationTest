@@ -5,6 +5,7 @@ from comfy.k_diffusion import sampling as k_diffusion_sampling
 from comfy.k_diffusion import sa_solver
 import latent_preview
 import torch
+import logging
 import comfy.utils
 import node_helpers
 from typing_extensions import override
@@ -404,6 +405,7 @@ class SamplerCustom_ISO(io.ComfyNode):
 
     @classmethod
     def execute(cls, model, add_noise, noise_seed, cfg, positive, negative, sampler, sigmas, latent_image) -> io.NodeOutput:
+        logger = logging.getLogger(__name__)
         latent = latent_image
         latent_image = latent['samples']
         latent = latent.copy()
@@ -419,7 +421,28 @@ class SamplerCustom_ISO(io.ComfyNode):
         x0_output = {}
         callback = latent_preview.prepare_callback(model, sigmas.shape[-1] - 1, x0_output)
         disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
-        samples = comfy.sample.sample_custom(model, noise, cfg, sampler, sigmas, positive, negative, latent_image, noise_mask=noise_mask, callback=callback, disable_pbar=disable_pbar, seed=noise_seed)
+        logger.warning(
+            "[SamplerCustom_ISO] sample_custom START seed=%s cfg=%s sampler=%s sigmas=%s",
+            noise_seed,
+            cfg,
+            getattr(sampler, 'name', sampler),
+            getattr(sigmas, 'shape', None),
+        )
+        samples = comfy.sample.sample_custom(
+            model,
+            noise,
+            cfg,
+            sampler,
+            sigmas,
+            positive,
+            negative,
+            latent_image,
+            noise_mask=noise_mask,
+            callback=callback,
+            disable_pbar=disable_pbar,
+            seed=noise_seed,
+        )
+        logger.warning("[SamplerCustom_ISO] sample_custom DONE")
         out = latent.copy()
         out['samples'] = samples
         if 'x0' in x0_output:

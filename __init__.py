@@ -67,6 +67,7 @@ from .nodes_tomesd import TomePatchModelExtension_ISO
 from .nodes_torch_compile import TorchCompileExtension_ISO
 from .nodes_train import TrainingExtension_ISO
 from .nodes_upscale_model import UpscaleModelExtension_ISO
+from .nodes_vae_clip_basic import VaeClipBasicExtension_ISO
 from .nodes_video import VideoExtension_ISO
 from .nodes_wan import WanExtension_ISO
 
@@ -149,6 +150,7 @@ async def comfy_entrypoint():
         TorchCompileExtension_ISO(),
         TrainingExtension_ISO(),
         UpscaleModelExtension_ISO(),
+        VaeClipBasicExtension_ISO(),
         VideoExtension_ISO(),
         WanExtension_ISO(),
     ]
