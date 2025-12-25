@@ -610,11 +610,75 @@ class AddNoise_ISO(io.ComfyNode):
         return io.NodeOutput(out)
     add_noise = execute
 
+
+class KSampler_ISO(io.ComfyNode):
+    """Standard KSampler as V3 API node for isolation testing."""
+
+    @classmethod
+    def define_schema(cls):
+        return io.Schema(
+            node_id='KSampler_ISO',
+            category='sampling',
+            inputs=[
+                io.Model.Input('model'),
+                io.Int.Input('seed', default=0, min=0, max=0xffffffffffffffff, control_after_generate=True),
+                io.Int.Input('steps', default=20, min=1, max=10000),
+                io.Float.Input('cfg', default=8.0, min=0.0, max=100.0, step=0.1, round=0.01),
+                io.Combo.Input('sampler_name', options=comfy.samplers.KSampler.SAMPLERS),
+                io.Combo.Input('scheduler', options=comfy.samplers.KSampler.SCHEDULERS),
+                io.Conditioning.Input('positive'),
+                io.Conditioning.Input('negative'),
+                io.Latent.Input('latent_image'),
+                io.Float.Input('denoise', default=1.0, min=0.0, max=1.0, step=0.01),
+            ],
+            outputs=[io.Latent.Output()]
+        )
+
+    @classmethod
+    def execute(cls, model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise) -> io.NodeOutput:
+        logger = logging.getLogger(__name__)
+        latent = latent_image
+        latent_samples = latent["samples"]
+        latent_samples = comfy.sample.fix_empty_latent_channels(model, latent_samples)
+
+        batch_inds = latent["batch_index"] if "batch_index" in latent else None
+        noise = comfy.sample.prepare_noise(latent_samples, seed, batch_inds)
+
+        noise_mask = None
+        if "noise_mask" in latent:
+            noise_mask = latent["noise_mask"]
+
+        callback = latent_preview.prepare_callback(model, steps)
+        disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
+
+        logger.warning("[KSampler_ISO:EXT1] sample START seed=%s steps=%s cfg=%s sampler=%s scheduler=%s denoise=%s",
+                       seed, steps, cfg, sampler_name, scheduler, denoise)
+
+        import time
+        start_time = time.perf_counter()
+        samples = comfy.sample.sample(
+            model, noise, steps, cfg, sampler_name, scheduler,
+            positive, negative, latent_samples,
+            denoise=denoise, disable_noise=False, start_step=None, last_step=None,
+            force_full_denoise=False, noise_mask=noise_mask, callback=callback,
+            disable_pbar=disable_pbar, seed=seed
+        )
+        elapsed = time.perf_counter() - start_time
+        steps_per_sec = steps / elapsed if elapsed > 0 else 0
+        logger.warning("[KSampler_ISO:EXT1] sample DONE %.2f steps/sec (%.3fs)", steps_per_sec, elapsed)
+
+        out = latent.copy()
+        out["samples"] = samples
+        return io.NodeOutput(out)
+
+    sample = execute
+
+
 class CustomSamplersExtension_ISO(ComfyExtension):
 
     @override
     async def get_node_list(self) -> list[type[io.ComfyNode]]:
-        return [SamplerCustom_ISO, BasicScheduler_ISO, KarrasScheduler_ISO, ExponentialScheduler_ISO, PolyexponentialScheduler_ISO, LaplaceScheduler_ISO, VPScheduler_ISO, BetaSamplingScheduler_ISO, SDTurboScheduler_ISO, KSamplerSelect_ISO, SamplerEulerAncestral_ISO, SamplerEulerAncestralCFGPP_ISO, SamplerLMS_ISO, SamplerDPMPP_3M_SDE_ISO, SamplerDPMPP_2M_SDE_ISO, SamplerDPMPP_SDE_ISO, SamplerDPMPP_2S_Ancestral_ISO, SamplerDPMAdaptative_ISO, SamplerER_SDE_ISO, SamplerSASolver_ISO, SplitSigmas_ISO, SplitSigmasDenoise_ISO, FlipSigmas_ISO, SetFirstSigma_ISO, ExtendIntermediateSigmas_ISO, SamplingPercentToSigma_ISO, CFGGuider_ISO, DualCFGGuider_ISO, BasicGuider_ISO, RandomNoise_ISO, DisableNoise_ISO, AddNoise_ISO, SamplerCustomAdvanced_ISO]
+        return [KSampler_ISO, SamplerCustom_ISO, BasicScheduler_ISO, KarrasScheduler_ISO, ExponentialScheduler_ISO, PolyexponentialScheduler_ISO, LaplaceScheduler_ISO, VPScheduler_ISO, BetaSamplingScheduler_ISO, SDTurboScheduler_ISO, KSamplerSelect_ISO, SamplerEulerAncestral_ISO, SamplerEulerAncestralCFGPP_ISO, SamplerLMS_ISO, SamplerDPMPP_3M_SDE_ISO, SamplerDPMPP_2M_SDE_ISO, SamplerDPMPP_SDE_ISO, SamplerDPMPP_2S_Ancestral_ISO, SamplerDPMAdaptative_ISO, SamplerER_SDE_ISO, SamplerSASolver_ISO, SplitSigmas_ISO, SplitSigmasDenoise_ISO, FlipSigmas_ISO, SetFirstSigma_ISO, ExtendIntermediateSigmas_ISO, SamplingPercentToSigma_ISO, CFGGuider_ISO, DualCFGGuider_ISO, BasicGuider_ISO, RandomNoise_ISO, DisableNoise_ISO, AddNoise_ISO, SamplerCustomAdvanced_ISO]
 
 async def comfy_entrypoint() -> CustomSamplersExtension_ISO:
     return CustomSamplersExtension_ISO()

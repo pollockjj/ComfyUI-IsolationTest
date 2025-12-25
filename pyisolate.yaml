@@ -1,4 +1,5 @@
 can_isolate: true
 can_sandbox: true
 share_torch: true
+share_cuda_ipc: true
 dependencies: []
