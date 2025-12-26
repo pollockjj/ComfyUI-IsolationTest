@@ -6,6 +6,7 @@ from comfy.k_diffusion import sa_solver
 import latent_preview
 import torch
 import logging
+import time
 import comfy.utils
 import node_helpers
 from typing_extensions import override
@@ -398,59 +399,66 @@ class Noise_RandomNoise:
         return comfy.sample.prepare_noise(latent_image, self.seed, batch_inds)
 
 class SamplerCustom_ISO(io.ComfyNode):
-
     @classmethod
     def define_schema(cls):
-        return io.Schema(node_id='SamplerCustom_ISO', category='sampling/custom_sampling', inputs=[io.Model.Input('model'), io.Boolean.Input('add_noise', default=True), io.Int.Input('noise_seed', default=0, min=0, max=18446744073709551615, control_after_generate=True), io.Float.Input('cfg', default=8.0, min=0.0, max=100.0, step=0.1, round=0.01), io.Conditioning.Input('positive'), io.Conditioning.Input('negative'), io.Sampler.Input('sampler'), io.Sigmas.Input('sigmas'), io.Latent.Input('latent_image')], outputs=[io.Latent.Output(display_name='output'), io.Latent.Output(display_name='denoised_output')])
+        return io.Schema(
+            node_id="SamplerCustom_ISO",
+            category="sampling/custom_sampling",
+            inputs=[
+                io.Model.Input("model"),
+                io.Boolean.Input("add_noise", default=True),
+                io.Int.Input("noise_seed", default=0, min=0, max=0xffffffffffffffff, control_after_generate=True),
+                io.Float.Input("cfg", default=8.0, min=0.0, max=100.0, step=0.1, round=0.01),
+                io.Conditioning.Input("positive"),
+                io.Conditioning.Input("negative"),
+                io.Sampler.Input("sampler"),
+                io.Sigmas.Input("sigmas"),
+                io.Latent.Input("latent_image"),
+            ],
+            outputs=[
+                io.Latent.Output(display_name="output"),
+                io.Latent.Output(display_name="denoised_output"),
+            ]
+        )
 
     @classmethod
     def execute(cls, model, add_noise, noise_seed, cfg, positive, negative, sampler, sigmas, latent_image) -> io.NodeOutput:
-        logger = logging.getLogger(__name__)
+        _node_start = time.perf_counter()
+        
         latent = latent_image
-        latent_image = latent['samples']
+        latent_image = latent["samples"]
         latent = latent.copy()
         latent_image = comfy.sample.fix_empty_latent_channels(model, latent_image)
-        latent['samples'] = latent_image
+        latent["samples"] = latent_image
+
         if not add_noise:
             noise = Noise_EmptyNoise().generate_noise(latent)
         else:
             noise = Noise_RandomNoise(noise_seed).generate_noise(latent)
+
         noise_mask = None
-        if 'noise_mask' in latent:
-            noise_mask = latent['noise_mask']
+        if "noise_mask" in latent:
+            noise_mask = latent["noise_mask"]
+
         x0_output = {}
         callback = latent_preview.prepare_callback(model, sigmas.shape[-1] - 1, x0_output)
+
         disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
-        logger.warning(
-            "[SamplerCustom_ISO] sample_custom START seed=%s cfg=%s sampler=%s sigmas=%s",
-            noise_seed,
-            cfg,
-            getattr(sampler, 'name', sampler),
-            getattr(sigmas, 'shape', None),
-        )
-        samples = comfy.sample.sample_custom(
-            model,
-            noise,
-            cfg,
-            sampler,
-            sigmas,
-            positive,
-            negative,
-            latent_image,
-            noise_mask=noise_mask,
-            callback=callback,
-            disable_pbar=disable_pbar,
-            seed=noise_seed,
-        )
-        logger.warning("[SamplerCustom_ISO] sample_custom DONE")
+        samples = comfy.sample.sample_custom(model, noise, cfg, sampler, sigmas, positive, negative, latent_image, noise_mask=noise_mask, callback=callback, disable_pbar=disable_pbar, seed=noise_seed)
+
         out = latent.copy()
-        out['samples'] = samples
-        if 'x0' in x0_output:
+        out["samples"] = samples
+        if "x0" in x0_output:
             out_denoised = latent.copy()
-            out_denoised['samples'] = model.model.process_latent_out(x0_output['x0'].cpu())
+            out_denoised["samples"] = model.model.process_latent_out(x0_output["x0"].cpu())
         else:
             out_denoised = out
+        
+        _node_end = time.perf_counter()
+        print(f"[WALL-NODE] SamplerCustom_ISO: {(_node_end - _node_start)*1000:.1f}ms")
+        
         return io.NodeOutput(out, out_denoised)
+
     sample = execute
 
 class Guider_Basic(comfy.samplers.CFGGuider):
