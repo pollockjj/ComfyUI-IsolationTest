@@ -659,9 +659,6 @@ class KSampler_ISO(io.ComfyNode):
         callback = latent_preview.prepare_callback(model, steps)
         disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
 
-        logger.warning("[KSampler_ISO:EXT1] sample START seed=%s steps=%s cfg=%s sampler=%s scheduler=%s denoise=%s",
-                       seed, steps, cfg, sampler_name, scheduler, denoise)
-
         import time
         start_time = time.perf_counter()
         samples = comfy.sample.sample(
@@ -673,7 +670,6 @@ class KSampler_ISO(io.ComfyNode):
         )
         elapsed = time.perf_counter() - start_time
         steps_per_sec = steps / elapsed if elapsed > 0 else 0
-        logger.warning("[KSampler_ISO:EXT1] sample DONE %.2f steps/sec (%.3fs)", steps_per_sec, elapsed)
 
         out = latent.copy()
         out["samples"] = samples
