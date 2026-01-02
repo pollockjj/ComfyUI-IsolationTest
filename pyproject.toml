@@ -1,0 +1,8 @@
+[project]
+name = "comfyui-isolationtest"
+version = "0.0.1"
+dependencies = []
+
+[tool.comfy.isolation]
+can_isolate = true
+share_torch = true
